@@ -1,14 +1,9 @@
 import java.io.*;
-import java.net.*;
+import java.net.Socket;
 
-/**
- * This thread is responsible to handle client connection.
- *
- * @author www.codejava.net
- */
 public class ServerThread extends Thread {
-    private Socket socket;
-    private SQL sql = new SQL();
+    private final Socket socket;
+    private final SQL sql = new SQL();
 
     public ServerThread(Socket socket) {
         this.socket = socket;
@@ -16,14 +11,10 @@ public class ServerThread extends Thread {
 
     public void run() {
 
-        System.out.println(
-                "Current Thread Name: "
-                        + Thread.currentThread().getName());
+        System.out.println("Current Thread Name: " + Thread.currentThread().getName());
         // gets the ID of the current thread
-        System.out.println(
-                "Current Thread ID: "
-                        + Thread.currentThread().getId());
-        sql.InsertDB("YEET", 10);
+        System.out.println("Current Thread ID: " + Thread.currentThread().getId());
+
         try {
             InputStream input = socket.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(input));
@@ -36,13 +27,14 @@ public class ServerThread extends Thread {
 
             do {
                 text = reader.readLine();
-                if(text !=null)
-                    reverseText = new StringBuilder(text).reverse().toString();
-                else
+                if (text != null) {
+                    reverseText = text.trim();
+                    sql.InsertDB(reverseText, 10, 10);
+                } else
                     reverseText = "";
                 writer.println("Server: " + reverseText + "\n" + sql.PrintAuctionItems() + "\n_END_");
 
-            } while (text != null && !text.equals("bye"));
+            } while (text != null && !text.equals("_CLOSE_"));
             System.out.println("Client disconnected");
             socket.close();
             this.join();

@@ -1,11 +1,12 @@
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class Server {
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         int port = 43595;
-       // SQL sql = new SQL();
-       // sql.CreateAuctionDB();
+        SQL sql = new SQL();
+        sql.CreateAuctionDB();
 
         try (ServerSocket serverSocket = new ServerSocket(port)) {
 
