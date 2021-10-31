@@ -1,16 +1,16 @@
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.stream.Stream;
+import java.nio.*;
 
 public class Client {
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
         String hostname = "localhost";
         int port = 43595;
 
-        for(int i=0;i<5;i++) {
-            System.out.print(("Creating client "+ i));
+        for (int i = 0; i < 5; i++) {
+            System.out.println(("Creating client " + i));
             try (Socket socket = new Socket(hostname, port)) {
 
                 OutputStream output = socket.getOutputStream();
@@ -19,15 +19,19 @@ public class Client {
                 Console console = System.console();
                 String text;
 
-               // do {
-                    text = "FYCK YEAH SPAM";//console.readLine("Enter text: ");
+                // do {
+                text = "FYCK YEAH SPAM";//console.readLine("Enter text: ");
 
-                    writer.println(text);
+                writer.println(text);
 
-                    InputStream input = socket.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-
-                    System.out.println(reader.readLine());
+                InputStream input = socket.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+                String currLine = "";
+                while (!currLine.contains("_END_")) {
+                    if (currLine.length() > 0)
+                        System.out.println("Data: " + currLine);
+                    currLine = reader.readLine();
+                }
 
                 //} while (!text.equals("bye"));
 

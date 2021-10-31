@@ -8,6 +8,7 @@ import java.net.*;
  */
 public class ServerThread extends Thread {
     private Socket socket;
+    private SQL sql = new SQL();
 
     public ServerThread(Socket socket) {
         this.socket = socket;
@@ -22,7 +23,7 @@ public class ServerThread extends Thread {
         System.out.println(
                 "Current Thread ID: "
                         + Thread.currentThread().getId());
-
+        sql.InsertDB("YEET", 10);
         try {
             InputStream input = socket.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(input));
@@ -39,7 +40,7 @@ public class ServerThread extends Thread {
                     reverseText = new StringBuilder(text).reverse().toString();
                 else
                     reverseText = "";
-                writer.println("Server: " + reverseText);
+                writer.println("Server: " + reverseText + "\n" + sql.PrintAuctionItems() + "\n_END_");
 
             } while (text != null && !text.equals("bye"));
             System.out.println("Client disconnected");
