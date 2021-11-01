@@ -1,15 +1,17 @@
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 enum ServerState {
-    AUCTION_ITEMS, BID_CONFIRMED, ITEM_CONFIRMED, IDLE
+    AUCTION_ITEMS, BID_CONFIRMED, BID_FAILED, ITEM_CONFIRMED, ITEM_FAILED, IDLE
 }
 public class ServerParser {
+    private final UUID uid;
     ArrayList<AuctionModel> items;
-    int rand;
     ServerState currentState = ServerState.IDLE;
 
-    ServerParser() {
+    ServerParser(UUID uid) {
+        this.uid = uid;
         items = new ArrayList<>();
     }
 
@@ -17,7 +19,7 @@ public class ServerParser {
         // Check if we have valid server messages
         ChangeState(text);
         if(currentState != ServerState.IDLE) {
-            System.out.println("Current State " + currentState.toString());
+            System.out.println("Current State " + currentState.toString() + " UID: " + uid);
         }
 
         switch (currentState) {
@@ -27,7 +29,9 @@ public class ServerParser {
                 ParseAuctionItems(parse);
             }
             case BID_CONFIRMED -> System.out.println("BID CONFIRMED");
+            case BID_FAILED -> System.out.println("BID FAILED");
             case ITEM_CONFIRMED -> System.out.println("SELLING ITEM CONFIRMED");
+            case ITEM_FAILED -> System.out.println("ADDING ITEM FAILED");
             case IDLE -> System.out.println("IDLING");
         }
     }
@@ -37,8 +41,12 @@ public class ServerParser {
             currentState = ServerState.AUCTION_ITEMS;
         else if(text.contains("BID_CONFIRMED"))
             currentState = ServerState.BID_CONFIRMED;
+        else if(text.contains("BID_FAILED"))
+            currentState = ServerState.BID_FAILED;
         else if(text.contains("ITEM_CONFIRMED"))
             currentState = ServerState.ITEM_CONFIRMED;
+        else if(text.contains("ITEM_FAILED"))
+            currentState = ServerState.ITEM_FAILED;
         else if(text.contains("_END_"))
             currentState = ServerState.IDLE;
     }

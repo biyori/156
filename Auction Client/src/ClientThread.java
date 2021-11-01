@@ -2,24 +2,28 @@ import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ClientThread extends Thread {
     private final Socket socket;
+    private final UUID uid;
     private final List<String> itemList;
 
-    public ClientThread(Socket socket, List<String> itemList) {
+    public ClientThread(Socket socket, UUID uid, List<String> itemList) {
         this.socket = socket;
+        this.uid = uid;
         this.itemList = itemList;
     }
 
     public void run() {
-        ServerParser sp = new ServerParser();
+        ServerParser sp = new ServerParser(uid); // Register our generated UID for communication with the server
         ClientActions fixed_actions = new ClientActions();
         RandomAction actions = new RandomAction(itemList);// Pass itemList to the random actions
         System.out.println("Current Thread Name: " + Thread.currentThread().getName());
         // gets the ID of the current thread
         System.out.println("Current Thread ID: " + Thread.currentThread().getId());
+        System.out.println("Current UUID: " + uid);
         try {
 
             OutputStream output = socket.getOutputStream();
@@ -27,8 +31,6 @@ public class ClientThread extends Thread {
 
             String command;
             int money = 1000;
-
-            int randItem = ThreadLocalRandom.current().nextInt(0, itemList.size() - 1);
 
             do {
                 // Update auction items
@@ -45,7 +47,9 @@ public class ClientThread extends Thread {
                     sp.Read(currLine);
                 }
 
-
+                // Pull a random command from the auction
+                AuctionModel rand_item = sp.GetRandomItem();
+                actions.MaybeUseItem(rand_item);
                 command = actions.GenerateRandomAction();
                 // Send the message
                 writer.println(command);
@@ -62,7 +66,7 @@ public class ClientThread extends Thread {
                 sp.ResetAuctionList();
 
                 // Sleep for a little
-                money /= 10;
+                money -= 10;
                 Thread.sleep(1000);
             } while (money != 1);
 

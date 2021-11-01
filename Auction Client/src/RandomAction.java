@@ -4,6 +4,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class RandomAction extends ClientActions {
     private final List<String> itemList;
     private int id;
+    private AuctionModel model;
 
     public RandomAction(List<String> itemList) {
         this.itemList = itemList;
@@ -19,9 +20,15 @@ public class RandomAction extends ClientActions {
             command = "NOTHING";
         } else if (id > 900) {
             command = "BIDDING";
+            if(model !=null)
+                return BidItem(model.id, model.cost + 10); // Increase amount by 10
             System.out.println("BIDDING ON ITEM");
         }
         return command;
+    }
+
+    public void MaybeUseItem(AuctionModel item) {
+        this.model = item;
     }
 
     private int randInt(int min, int max) {

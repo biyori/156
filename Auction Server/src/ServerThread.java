@@ -31,16 +31,38 @@ public class ServerThread extends Thread {
                     reverseText = text.trim();
 
                     if (reverseText.contains("GET_AUCTION_ITEMS")) {
-
-                        System.out.println("Sending item list from thread " + Thread.currentThread().getId());
+                        //System.out.println("Sending item list from thread " + Thread.currentThread().getId());
                         writer.println("AUCTION_ITEMS: " + reverseText + "\n" + sql.PrintAuctionItems(false) + "\n");
-                    } else if(reverseText.contains("SELL\t")) {
+                    } else if (reverseText.contains("SELL\t")) {
                         //SELL	Prescriptions	4	572
                         String[] split = reverseText.split("\t");
                         System.out.println("ADDING item: " + split[1]);
-                        sql.InsertDB(split[1], Integer.parseInt(split[3]), Integer.parseInt(split[2]));
-                        writer.println("ITEM_CONFIRMED: " + split[1] + "\n");
-                    } else {
+                        if (!sql.ItemExists(split[1])) { // Item name
+                            sql.InsertDB(split[1], Integer.parseInt(split[3]), Integer.parseInt(split[2]));
+                            writer.println("ITEM_CONFIRMED: " + split[1] + "\n");
+                        } else {
+                            writer.println("ITEM_FAILED: " + split[1] + "\n");
+                        }
+                    } else if (reverseText.contains("BID\t")) {
+                        //BID	11	427 (id, cost)
+                        String[] split = reverseText.split("\t");
+                        System.out.println("TRYING TO BID ON item id: " + split[1]);
+                        if (sql.ItemExists(Integer.parseInt(split[1]))) { // Item id (int cast differentiation)
+                            if (sql.UpdateItemPrice(Integer.parseInt(split[1]), Integer.parseInt(split[2])))
+                                writer.println("BID_CONFIRMED: " + split[1] + "\n");
+                            else
+                                writer.println("BID_FAILED: " + split[1] + " BID TOO LOW");
+                        } else {
+                            System.out.println("BID FAILED!!!!###");
+                            writer.println("BID_FAILED: " + split[1] + "\n");
+                        }
+                    } else if (reverseText.contains("REGISTER\t")) {
+                        //BID	11	427 (id, cost)
+                        String[] split = reverseText.split("\t");
+                        System.out.println("REGISTER UUID: " + split[1]);
+                        writer.println("UID_CONFIRMED: " + split[1] + "\n");
+
+                    }else {
                         System.out.println("WTF DID U SEND?? " + reverseText);
                     }
 

@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
+import java.util.UUID;
 
 public class Client {
     public static void main(String[] args) {
@@ -16,7 +17,10 @@ public class Client {
             System.out.println("Creating client " + i);
             try {
                 Socket socket = new Socket(hostname, port);
-                new ClientThread(socket, itemList).start();
+                // Generate a UUID for each thread and set it as a unique identifier
+                // to register with the server
+                UUID uid = UUID.randomUUID();
+                new ClientThread(socket, uid, itemList).start();
             } catch (IOException e) {
                 System.out.println("Client initialization error: " + e.getMessage());
             }

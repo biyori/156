@@ -3,6 +3,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
+    @SuppressWarnings("InfiniteLoopStatement") // This is intended behavior to forever accept TCP connections
     public static void main(String[] args) {
         int port = 43595;
         SQL sql = new SQL();
@@ -14,7 +15,6 @@ public class Server {
             while (true) {
                 Socket socket = serverSocket.accept();
                 System.out.println("New client connected");
-
                 new ServerThread(socket).start();
             }
 

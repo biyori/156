@@ -13,9 +13,4 @@ public class ClientActions implements Actions {
     public String GetAuctionItems() {
         return "GET_AUCTION_ITEMS ";
     }
-
-    @Override
-    public boolean PurchasedItem(String text) {
-        return text.contains("_SOLD_");
-    }
 }
