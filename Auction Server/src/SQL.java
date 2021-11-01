@@ -77,7 +77,7 @@ public class SQL {
         }
     }
 
-    public String PrintAuctionItems() {
+    public String PrintAuctionItems(boolean printItems) {
         StringBuilder auctionList = new StringBuilder();
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:auction.db");
@@ -98,7 +98,9 @@ public class SQL {
                         append(rs.getInt("price")).
                         append("\n");
 
-                System.out.println("[" + rs.getInt("id") + "] " + rs.getString("name") + " (" + rs.getInt("quantity") + ") Price: " + rs.getInt("price"));
+                if(printItems)
+                    System.out.println("[" + rs.getInt("id") + "] " + rs.getString("name") + " (" + rs.getInt("quantity") + ") Price: " + rs.getInt("price"));
+
             }
         } catch (SQLException e) {
             // if the error message is "out of memory",

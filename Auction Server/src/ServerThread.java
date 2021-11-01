@@ -29,10 +29,25 @@ public class ServerThread extends Thread {
                 text = reader.readLine();
                 if (text != null) {
                     reverseText = text.trim();
-                    sql.InsertDB(reverseText, 10, 10);
+
+                    if (reverseText.contains("GET_AUCTION_ITEMS")) {
+
+                        System.out.println("Sending item list from thread " + Thread.currentThread().getId());
+                        writer.println("AUCTION_ITEMS: " + reverseText + "\n" + sql.PrintAuctionItems(false) + "\n");
+                    } else if(reverseText.contains("SELL\t")) {
+                        //SELL	Prescriptions	4	572
+                        String[] split = reverseText.split("\t");
+                        System.out.println("ADDING item: " + split[1]);
+                        sql.InsertDB(split[1], Integer.parseInt(split[3]), Integer.parseInt(split[2]));
+                        writer.println("ITEM_CONFIRMED: " + split[1] + "\n");
+                    } else {
+                        System.out.println("WTF DID U SEND?? " + reverseText);
+                    }
+
+                    //sql.InsertDB(reverseText, 10, 10);
                 } else
                     reverseText = "";
-                writer.println("Server: " + reverseText + "\n" + sql.PrintAuctionItems() + "\n_END_");
+                writer.println("Server: " + reverseText + "\n" + "\n_END_");
 
             } while (text != null && !text.equals("_CLOSE_"));
             System.out.println("Client disconnected");

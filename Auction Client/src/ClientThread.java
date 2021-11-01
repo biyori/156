@@ -1,16 +1,22 @@
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ClientThread extends Thread {
     private final Socket socket;
+    private final List<String> itemList;
 
-    public ClientThread(Socket socket) {
+    public ClientThread(Socket socket, List<String> itemList) {
         this.socket = socket;
+        this.itemList = itemList;
     }
 
     public void run() {
         ServerParser sp = new ServerParser();
+        ClientActions fixed_actions = new ClientActions();
+        RandomAction actions = new RandomAction(itemList);// Pass itemList to the random actions
         System.out.println("Current Thread Name: " + Thread.currentThread().getName());
         // gets the ID of the current thread
         System.out.println("Current Thread ID: " + Thread.currentThread().getId());
@@ -19,29 +25,41 @@ public class ClientThread extends Thread {
             OutputStream output = socket.getOutputStream();
             PrintWriter writer = new PrintWriter(output, true);
 
-            String text;
+            String command;
             int money = 1000;
 
-            do {
-                // Reset the auction listings
-                sp.UpdateAuctionList();
-                text = "BUY POWER " + money;
+            int randItem = ThreadLocalRandom.current().nextInt(0, itemList.size() - 1);
 
+            do {
+                // Update auction items
+                command = fixed_actions.GetAuctionItems();
                 // Send the message
-                writer.println(text);
+                writer.println(command);
 
                 // Read the response
                 InputStream input = socket.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
                 String currLine = "";
                 while (!currLine.contains("_END_")) {
-                   // if (currLine.length() > 0)
-                   //     System.out.println("Data: " + currLine);
                     currLine = reader.readLine();
                     sp.Read(currLine);
                 }
 
-    System.out.println("Auction Size: " + sp.AuctionSize());
+
+                command = actions.GenerateRandomAction();
+                // Send the message
+                writer.println(command);
+                // Read the response
+                currLine = "";
+                while (!currLine.contains("_END_")) {
+                    System.out.println("EXECUTING ROUND 2");
+                    currLine = reader.readLine();
+                    sp.Read(currLine);
+                }
+
+                System.out.println("Auction Size: " + sp.AuctionSize());
+
+                sp.ResetAuctionList();
 
                 // Sleep for a little
                 money /= 10;
