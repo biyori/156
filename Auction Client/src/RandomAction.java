@@ -16,13 +16,13 @@ public class RandomAction extends ClientActions {
         if (id <= 100) {
             return SellItem(itemList.get(id), randInt(1, 5), randInt(100, 1000));
         } else if (id <= 500) {
-            System.out.println("IDLING DOING NOTHING");
+            //System.out.println("IDLING DOING NOTHING");
             command = "NOTHING";
         } else if (id > 900) {
             command = "BIDDING";
+            System.out.println("BIDDING ON ITEM");
             if(model !=null)
                 return BidItem(model.id, model.cost + 10); // Increase amount by 10
-            System.out.println("BIDDING ON ITEM");
         }
         return command;
     }

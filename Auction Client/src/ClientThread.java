@@ -20,12 +20,12 @@ public class ClientThread extends Thread {
         ServerParser sp = new ServerParser(uid); // Register our generated UID for communication with the server
         ClientActions fixed_actions = new ClientActions();
         RandomAction actions = new RandomAction(itemList);// Pass itemList to the random actions
-        System.out.println("Current Thread Name: " + Thread.currentThread().getName());
+      //  System.out.println("Current Thread Name: " + Thread.currentThread().getName());
         // gets the ID of the current thread
-        System.out.println("Current Thread ID: " + Thread.currentThread().getId());
+       // System.out.println("Current Thread ID: " + Thread.currentThread().getId());
         System.out.println("Current UUID: " + uid);
-        try {
 
+        try {
             OutputStream output = socket.getOutputStream();
             PrintWriter writer = new PrintWriter(output, true);
 
@@ -33,19 +33,27 @@ public class ClientThread extends Thread {
             int money = 1000;
 
             do {
-                // Update auction items
-                command = fixed_actions.GetAuctionItems();
+                InputStream input = socket.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+
+                // Register for auction
+                if(!sp.hasRegistered()) {
+                    command = fixed_actions.RegisterForAuction(uid);
+                } else {
+                    // Update auction item
+                    command = fixed_actions.GetAuctionItem();
+                }
                 // Send the message
                 writer.println(command);
 
                 // Read the response
-                InputStream input = socket.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(input));
                 String currLine = "";
                 while (!currLine.contains("_END_")) {
                     currLine = reader.readLine();
+                    System.out.println(currLine);
                     sp.Read(currLine);
                 }
+                System.out.println("\t----SERVER STATE: " + sp.State().name());
 
                 // Pull a random command from the auction
                 AuctionModel rand_item = sp.GetRandomItem();

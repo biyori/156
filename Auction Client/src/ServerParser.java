@@ -3,10 +3,12 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 enum ServerState {
-    AUCTION_ITEMS, BID_CONFIRMED, BID_FAILED, ITEM_CONFIRMED, ITEM_FAILED, IDLE
+    REGISTER_AUCTION, AUCTION_ITEMS, BID_CONFIRMED, BID_FAILED, ITEM_CONFIRMED, ITEM_FAILED,ITEM_WON, IDLE
 }
+
 public class ServerParser {
     private final UUID uid;
+    private boolean confirmRegistration = false;
     ArrayList<AuctionModel> items;
     ServerState currentState = ServerState.IDLE;
 
@@ -18,7 +20,7 @@ public class ServerParser {
     public void Read(String text) {
         // Check if we have valid server messages
         ChangeState(text);
-        if(currentState != ServerState.IDLE) {
+        if (currentState != ServerState.IDLE) {
             System.out.println("Current State " + currentState.toString() + " UID: " + uid);
         }
 
@@ -32,22 +34,41 @@ public class ServerParser {
             case BID_FAILED -> System.out.println("BID FAILED");
             case ITEM_CONFIRMED -> System.out.println("SELLING ITEM CONFIRMED");
             case ITEM_FAILED -> System.out.println("ADDING ITEM FAILED");
+            case ITEM_WON -> System.out.println("WE BOUGHT AN ITEM!");
+            case REGISTER_AUCTION -> System.out.println("REGISTERING FOR AUCTION");
             case IDLE -> System.out.println("IDLING");
         }
     }
 
+    public boolean hasRegistered() {
+        return confirmRegistration;
+    }
+
+    public ServerState State() {
+        return currentState;
+    }
+
     private void ChangeState(String text) {
-        if(text.contains("AUCTION_ITEMS"))
+        if (text.contains("AUCTION_ITEMS"))
             currentState = ServerState.AUCTION_ITEMS;
-        else if(text.contains("BID_CONFIRMED"))
+        else if(text.contains("CURRENT_ITEM"))
+            currentState = ServerState.AUCTION_ITEMS;
+        else if (text.contains("BID_CONFIRMED"))
             currentState = ServerState.BID_CONFIRMED;
-        else if(text.contains("BID_FAILED"))
+        else if (text.contains("BID_FAILED"))
             currentState = ServerState.BID_FAILED;
-        else if(text.contains("ITEM_CONFIRMED"))
+        else if (text.contains("ITEM_CONFIRMED"))
             currentState = ServerState.ITEM_CONFIRMED;
-        else if(text.contains("ITEM_FAILED"))
+        else if (text.contains("ITEM_FAILED"))
             currentState = ServerState.ITEM_FAILED;
-        else if(text.contains("_END_"))
+        else if (text.contains("REGISTER_AUCTION"))
+            currentState = ServerState.REGISTER_AUCTION;
+        else if (text.contains("UID_CONFIRMED")) {
+            currentState = ServerState.IDLE;
+            confirmRegistration = true;
+        }else if (text.contains("ITEM_WON")) {
+            currentState = ServerState.ITEM_WON;
+        } else if (text.contains("_END_"))
             currentState = ServerState.IDLE;
     }
 
@@ -81,9 +102,13 @@ public class ServerParser {
     }
 
     public AuctionModel GetRandomItem() {
-        if(!items.isEmpty()) {
-            int rand_item = ThreadLocalRandom.current().nextInt(0, items.size()-1);
-           return items.get(rand_item);
+        if (!items.isEmpty()) {
+            // Only 1 item return the top
+            if(items.size() == 1)
+                return items.get(0);
+            // Return a random item
+            int rand_item = ThreadLocalRandom.current().nextInt(0, items.size() - 1);
+            return items.get(rand_item);
         }
         return null;
     }
