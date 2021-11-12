@@ -1,5 +1,10 @@
+Air conditioner
+Air purifier
 Alarm clock
+Amazon basics thing
+Apple pencil
 Armoire
+Avocado
 Backpack
 Bedding
 Bedspread
@@ -24,6 +29,8 @@ Comforter
 Computer
 Containers
 Couch
+CPU (Intel)
+CPU (Amd)
 Credenza
 Cup
 Curtains
@@ -48,22 +55,29 @@ Flashlight
 Flatware
 Flowers
 Forks
+Freezer
 Furnace
 Games
 Glasses
+Google Pixel
 Hammer
 Heater
 Houseplant
+iMac
+Impact driver
 iPhone
 iPod
 Iron
 Ironing board
 Jewelry
+Juicer
 Knives
 Lamp
 Light bulbs
 Light switch
 Linens
+Macbook Pro
+Macbook Air
 Magnets
 Markers
 Medicine
@@ -93,12 +107,14 @@ Plastic plates
 Plates
 Pliers
 Pots
+Power tools
 Prescriptions
 Radiator
 Radio
 Rags
 Refrigerator
 Rugs
+Samsung Galaxy
 Saucer
 Saw
 Scissors
@@ -109,9 +125,10 @@ Sheets
 Shelf
 Shirts
 Shoes
-Smoke
-detector
+Smoke detector
+Smoker grill
 Sneakers
+Soap bar
 Socks
 Sofa
 Speakers
@@ -135,3 +152,4 @@ Vacuum
 Vase
 Washer
 Washing machine
+Whisk

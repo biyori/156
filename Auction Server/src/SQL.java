@@ -11,10 +11,13 @@ public class SQL {
         } catch (SQLException e) {
             // if the error message is "out of memory",
             // it probably means no database file is found
-            System.err.println("WOT THE FOK " + e.getMessage());
+            System.err.println("SQL() constructor error : " + e.getMessage());
         }
     }
 
+    /**
+     * Prepare the Auction DB
+     */
     public void CreateAuctionDB() {
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:auction.db");
@@ -40,7 +43,7 @@ public class SQL {
         } catch (SQLException e) {
             // if the error message is "out of memory",
             // it probably means no database file is found
-            System.err.println("WPT THE FOK " + e.getMessage());
+            System.err.println("CreateAuctionDB(): " + e.getMessage());
         } finally {
             try {
                 if (connection != null)
@@ -124,10 +127,10 @@ public class SQL {
 
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
-            ResultSet rs = statement.executeQuery("select * from items");
+            ResultSet rs = statement.executeQuery("select * from items where active = 1");
             while (rs.next()) {
                 // read the result set
-                System.out.println("[" + rs.getInt("id") + "] " + rs.getString("name") + " (" + rs.getInt("quantity") + ") Price: " + rs.getInt("price"));
+                System.out.println("\t[" + rs.getInt("id") + "] " + rs.getString("name") + " (" + rs.getInt("quantity") + ") Price: " + rs.getInt("price"));
             }
         } catch (SQLException e) {
             // if the error message is "out of memory",
@@ -237,7 +240,6 @@ public class SQL {
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:auction.db");
 
-
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
             ResultSet rs = statement.executeQuery("select * from items where active = 1 limit 1");
@@ -272,6 +274,35 @@ public class SQL {
         return auctionItem;
     }
 
+    public int CurrentAuctionSize() {
+        int auctionSize = 0;
+        try {
+            connection = DriverManager.getConnection("jdbc:sqlite:auction.db");
+
+            Statement statement = connection.createStatement();
+            statement.setQueryTimeout(30);  // set timeout to 30 sec.
+            ResultSet rs = statement.executeQuery("select count(active) as total from items where active = 1");
+
+            while (rs.next()) {
+                // read the result set
+               auctionSize= rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            // if the error message is "out of memory",
+            // it probably means no database file is found
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null)
+                    connection.close();
+            } catch (SQLException e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+        return auctionSize;
+    }
+
     public String PrintAuctionItems(boolean printItems) {
         StringBuilder auctionList = new StringBuilder();
         try {
@@ -279,7 +310,7 @@ public class SQL {
 
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
-            ResultSet rs = statement.executeQuery("select * from items");
+            ResultSet rs = statement.executeQuery("select * from items where active = 1");
 
             while (rs.next()) {
                 // read the result set
@@ -359,7 +390,7 @@ public class SQL {
             ResultSet rs = query.executeQuery();
             while (rs.next()) {
                 // read the result set
-                if (Objects.equals(rs.getString("client_uuid"), id.toString()))
+                if (Objects.equals(rs.getString("client_uuid"), id))
                     return true;
             }
         } catch (SQLException e) {

@@ -20,24 +20,24 @@ public class ClientThread extends Thread {
         ServerParser sp = new ServerParser(uid); // Register our generated UID for communication with the server
         ClientActions fixed_actions = new ClientActions();
         RandomAction actions = new RandomAction(itemList);// Pass itemList to the random actions
-      //  System.out.println("Current Thread Name: " + Thread.currentThread().getName());
+        //  System.out.println("Current Thread Name: " + Thread.currentThread().getName());
         // gets the ID of the current thread
-       // System.out.println("Current Thread ID: " + Thread.currentThread().getId());
-        System.out.println("Current UUID: " + uid);
+        // System.out.println("Current Thread ID: " + Thread.currentThread().getId());
+        //System.out.println("Current UUID: " + uid);
 
         try {
             OutputStream output = socket.getOutputStream();
             PrintWriter writer = new PrintWriter(output, true);
 
             String command;
-            int money = 1000;
+            int money = 100000;
 
             do {
                 InputStream input = socket.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
                 // Register for auction
-                if(!sp.hasRegistered()) {
+                if (!sp.hasRegistered()) {
                     command = fixed_actions.RegisterForAuction(uid);
                 } else {
                     // Update auction item
@@ -50,10 +50,8 @@ public class ClientThread extends Thread {
                 String currLine = "";
                 while (!currLine.contains("_END_")) {
                     currLine = reader.readLine();
-                    System.out.println(currLine);
-                    sp.Read(currLine);
+                        sp.Read(currLine);
                 }
-                System.out.println("\t----SERVER STATE: " + sp.State().name());
 
                 // Pull a random command from the auction
                 AuctionModel rand_item = sp.GetRandomItem();
@@ -64,19 +62,15 @@ public class ClientThread extends Thread {
                 // Read the response
                 currLine = "";
                 while (!currLine.contains("_END_")) {
-                    System.out.println("EXECUTING ROUND 2");
                     currLine = reader.readLine();
                     sp.Read(currLine);
                 }
-
-                System.out.println("Auction Size: " + sp.AuctionSize());
-
                 sp.ResetAuctionList();
 
                 // Sleep for a little
-                money -= 10;
-                Thread.sleep(1000);
-            } while (money != 1);
+                money -= 1;
+                Thread.sleep(ThreadLocalRandom.current().nextInt(500, 3500));
+            } while (money > 0);
 
             System.out.print("Closing connection... ");
             // Close readers + socket
@@ -90,6 +84,8 @@ public class ClientThread extends Thread {
             System.out.println("I/O error: " + ex.getMessage());
         } catch (InterruptedException ex) {
             System.out.println("Thread sleep error " + ex.getMessage());
+        } catch (NullPointerException np) {
+            System.out.println("Auction sent no data - closing connection");
         } finally {
             System.out.println("Client quit");
 //            try { // We don't have to join the thread because I guess the program exits anyway
