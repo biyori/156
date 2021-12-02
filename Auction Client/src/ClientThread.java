@@ -20,10 +20,10 @@ public class ClientThread extends Thread {
         ServerParser sp = new ServerParser(uid); // Register our generated UID for communication with the server
         ClientActions fixed_actions = new ClientActions();
         RandomAction actions = new RandomAction(itemList);// Pass itemList to the random actions
-        //  System.out.println("Current Thread Name: " + Thread.currentThread().getName());
+        // System.out.println("Current Thread Name: " + Thread.currentThread().getName());
         // gets the ID of the current thread
         // System.out.println("Current Thread ID: " + Thread.currentThread().getId());
-        //System.out.println("Current UUID: " + uid);
+        // System.out.println("Current UUID: " + uid);
 
         try {
             OutputStream output = socket.getOutputStream();
