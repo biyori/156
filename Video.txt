@@ -1,0 +1,71 @@
+# Youtube Video: https://youtu.be/eEjiWmkJPBM
+
+# Client Profile
+
+Client Profile is in the "Auction Client" folder and it lists items for a random price between randInt(1, 5) as the starting price. Prices can eventually expand up to $1,000.
+
+# Database stuff
+
+Here are the items that were sold in the auction and their final strike price
+id   name                 price  quantity  active  item_expires 
+---  -------------------  -----  --------  ------  -------------
+1    Scooter              1012   3         0       1636638146300
+2    Pencil               1281   200       0       1636638206559
+3    iPhone 12            2279   2         0       1636638267059
+4    Towels               1976   2         0       1636638327100
+5    Chairs               2471   2         0       1636638387113
+6    Power tools          1692   3         0       1636638447196
+7    Saw                  1966   2         0       1636638507439
+8    Scissors             1589   4         0       1636638567707
+9    Games                1956   4         0       1636638628362
+10   Dishwasher           2173   1         0       1636638688467
+11   Freezer              1913   2         0       1636638748496
+12   Napkins              1938   2         0       1636638810035
+13   Pitcher              1531   1         0       1636638870171
+14   Broom                2222   1         0       1636638930249
+15   Computer             1389   3         0       1636638990993
+16   Macbook Pro          1845   3         0       1636639051141
+17   Avocado              1941   2         0       1636639111893
+18   CPU (Amd)            1915   4         0       1636639171962
+19   Vase                 2120   4         0       1636639231996
+20   Bookcase             1991   3         0       1636639292740
+21   Blankets             1915   4         0       1636639353287
+22   Toaster              1855   1         0       1636639413381
+23   Heater               2155   4         0       1636639473593
+24   Calendar             1410   1         0       1636639533754
+---  -------------------  -----  --------  ------  -------------
+
+Here are the winners of the first 10 items
+id   item_id  price  client_uuid
+---  -------  -----  ------------------------------------
+2    1        1012   1d33b725-ac2d-4d1a-a718-5e5e1b589a99
+10   2        1281   8614c3d5-071f-4d67-bc56-9cbd6dc601e0
+13   3        2279   ab7fe4e9-cf06-4c2b-b8f3-62c67e7ce64b
+16   4        1976   8614c3d5-071f-4d67-bc56-9cbd6dc601e0
+22   5        2471   ab7fe4e9-cf06-4c2b-b8f3-62c67e7ce64b
+28   6        1692   8614c3d5-071f-4d67-bc56-9cbd6dc601e0
+35   7        1966   e445b1b9-4a30-49d4-a85a-985c8b3d46df
+37   8        1589   e445b1b9-4a30-49d4-a85a-985c8b3d46df
+45   9        1956   ab7fe4e9-cf06-4c2b-b8f3-62c67e7ce64b
+46   10       2173   ab7fe4e9-cf06-4c2b-b8f3-62c67e7ce64b
+---  -------  -----  ------------------------------------
+
+The total items each thread purchased
+count(item_id)  client_uuid
+--------------  ------------------------------------
+26              1d33b725-ac2d-4d1a-a718-5e5e1b589a99
+26              67b0e8b2-f5db-4c39-8e43-82ce1ad87260
+32              8614c3d5-071f-4d67-bc56-9cbd6dc601e0
+30              ab7fe4e9-cf06-4c2b-b8f3-62c67e7ce64b
+42              e445b1b9-4a30-49d4-a85a-985c8b3d46df
+--------------  ------------------------------------
+
+The total amount spend by each thread
+sum(price)  client_uuid
+----------  ------------------------------------
+45242       1d33b725-ac2d-4d1a-a718-5e5e1b589a99
+48107       67b0e8b2-f5db-4c39-8e43-82ce1ad87260
+58824       8614c3d5-071f-4d67-bc56-9cbd6dc601e0
+55949       ab7fe4e9-cf06-4c2b-b8f3-62c67e7ce64b
+77870       e445b1b9-4a30-49d4-a85a-985c8b3d46df
+----------  ------------------------------------
